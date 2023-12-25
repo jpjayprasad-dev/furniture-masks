@@ -6,7 +6,7 @@ from utils import mask_image
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'avif', 'webp'}
 
 # Set up logging
 logging.basicConfig(filename='app.log', level=logging.ERROR)
@@ -52,6 +52,7 @@ def detect_furniture():
         else:
             return jsonify({'error': 'File format not allowed'})
     except Exception as e:
+        print(e)
         logging.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal Server Error'})
 

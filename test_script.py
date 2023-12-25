@@ -15,7 +15,6 @@ def make_api_call(image_file_path, furniture_labels):
         with open(image_file_path, "rb") as file:
             files = {"file": (image_file_path, file)}
             response = requests.post(api_url, files=files, data=payload)
-
         # Parse the JSON response
         response_data = json.loads(response.text)
 
@@ -25,7 +24,7 @@ def make_api_call(image_file_path, furniture_labels):
         if base64_image_data:
             decoded_image_bytes = base64.b64decode(base64_image_data)
 
-            with open('decoded_image.jpg', 'wb') as f:
+            with open('masked_image.jpg', 'wb') as f:
                 f.write(decoded_image_bytes)
 
     except Exception as e:

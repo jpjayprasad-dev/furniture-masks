@@ -17,7 +17,7 @@ model = YOLO('yolov8n.pt')
 model.to('cpu')
 
 # Set up logging
-logging.basicConfig(filename='utils.log', level=logging.ERROR)
+logging.basicConfig(filename='utils.log', level=logging.INFO)
 
 def mask_image(filepath, queries):
     try:
@@ -48,7 +48,7 @@ def mask_image(filepath, queries):
                 # Create a combined embedding of label, probability and coordinates
                 combined_embedding = np.concatenate((label_embedding, np.array([prob])))
 
-                print("Adding label/prob/cords ", label, "/", prob, "/", cords)
+                logging.info(f"Identified label:  {str(label)} with coordinates : {str(cords)} of probability: {str(prob)}")
 
                 # Add the combined embedding in Annoy Index
                 t.add_item(i, combined_embedding)
@@ -77,8 +77,7 @@ def mask_image(filepath, queries):
 
             for i in range(len(nearest_indexes)):
                 nearest_index = nearest_indexes[i]
-                distance = distances[i]
-                print("nearest_index/distance ", nearest_index, "/", distance)
+                distance = distances[i] # TODO: Filter based on distance
                 if nearest_index != -1:
                     for name, obj in objDict.items():
                         if nearest_index in obj['indexes']:
@@ -88,7 +87,7 @@ def mask_image(filepath, queries):
                             for cord in cords:
                                 box = {'xmin' : cord[0], 'ymin' : cord[1], 'xmax' : cord[2], 'ymax':cord[3]}
                                 boxes.append(box)
-                                print("cords/query", cord, "/", query)
+                                logging.info(f"Identified coordinates : {str(cord)} for the query label: {str(query)}")
 
         if boxes:
             # Detect and combine overlapping boxes
@@ -143,10 +142,6 @@ def generate_masks(image_path, boxes):
         # Convert the masked image to base64
         _, encoded_image = cv2.imencode('.jpg', masked_image)
         base64_image = base64.b64encode(encoded_image).decode('utf-8')
-
-        # Save the masked image to the file system
-        output_path = os.path.join('output', 'masked_image.jpg')
-        cv2.imwrite(output_path, masked_image)
 
         return base64_image
     except Exception as e:

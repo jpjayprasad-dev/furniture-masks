@@ -52,7 +52,6 @@ def detect_furniture():
         else:
             return jsonify({'error': 'File format not allowed'})
     except Exception as e:
-        print(e)
         logging.error(f"An error occurred: {str(e)}")
         return jsonify({'error': 'Internal Server Error'})
 
